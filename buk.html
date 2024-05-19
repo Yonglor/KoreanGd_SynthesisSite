@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국지메 종합사이트 - 버킷리스트</title>
+    <style>
+        /* 체크박스가 체크된 경우의 배경색 스타일 */
+        .highlight {
+            background-color: skyblue;
+            border-radius: 20px;
+        }
+        /* 텍스트와 숫자 인풋 사이의 간격을 넓히기 위한 스타일 */
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 간격을 10px로 설정 */
+            margin-bottom: 10px; /* 항목들 사이의 간격 설정 */
+        }
+        /* 숫자 인풋의 너비 조정 */
+        input[type="number"] {
+            width: 50px; /* 필요에 따라 너비 조정 */
+        }
+        /* 텍스트 수정 필드 스타일 */
+        .text-edit-field {
+            border: 1px solid #ccc;
+            padding: 2px 5px;
+            border-radius: 3px;
+            display: none;
+        }
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+        }
+
+        .butf {
+            font-family: "Noto Sans KR", sans-serif;
+        }
+
+        .guidc {
+            border-radius: 50%;
+            width : 20px;
+            height : 20px;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+<body>
+    <h1>한국지메 종합사이트 - 버킷리스트</h1>
+
+    <div class="guidc"></div> : 클리어 됨
+    
+    <hr>
+    <p></p>
+    <!-- 사용자 입력을 받는 텍스트 인풋 -->
+    <input type="text" id="userInput" placeholder="여기에 맵 이름을 입력하세요">
+    <!-- 확인 버튼 -->
+    <button class="butf" onclick="addText()">확인</button>
+    <!-- 저장 버튼 -->
+    <button class="butf" onclick="saveData()">저장</button>
+    <!-- 데이터 삭제 버튼 -->
+    <button class="butf" onclick="deleteData()">데이터 삭제</button>
+    <!-- 파일로 저장 버튼 -->
+    <button class="butf" onclick="saveToFile()">파일로 저장</button>
+    <!-- 파일 불러오기 인풋 -->
+    <input class="butf" type="file" id="fileInput" accept=".json" onchange="loadFromFile(event)" style="display: none;">
+    <!-- 파일 불러오기 버튼 -->
+    <button class="butf" onclick="document.getElementById('fileInput').click()">파일 불러오기</button>
+
+    <!-- 결과를 출력할 div -->
+    <div id="output"></div>
+    
+
+    <script>
+        // 페이지가 로드될 때 저장된 데이터를 불러옴
+        window.onload = function() {
+            loadData();
+        };
+
+        // 확인 버튼을 눌렀을 때 호출되는 함수
+        function addText() {
+            const input = document.getElementById('userInput').value;
+            // 입력된 텍스트가 비어있으면 함수 종료
+            if (input.trim() === '') return;
+
+            // 새로운 div 요소 생성
+            const div = document.createElement('div');
+            div.classList.add('item'); // 아이템 클래스 추가
+
+            // 체크박스 생성
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            // 체크박스 클릭 시 배경색 변경
+            checkbox.onclick = function() {
+                if (checkbox.checked) {
+                    div.classList.add('highlight');
+                } else {
+                    div.classList.remove('highlight');
+                }
+            };
+
+            // 입력된 텍스트를 표시할 span 생성
+            const text = document.createElement('span');
+            text.textContent = input;
+
+            // 삭제 버튼 생성
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '삭제';
+            deleteButton.onclick = function() {
+                div.remove();
+            };
+
+            // 퍼센트 입력을 위한 숫자 인풋 생성
+            const percentageInput = document.createElement('input');
+            percentageInput.type = 'number';
+            percentageInput.min = 0;
+            percentageInput.max = 100;
+            percentageInput.placeholder = '0-100';
+
+            // 체크박스, 텍스트, 숫자 인풋, 삭제 버튼을 div에 추가
+            div.appendChild(checkbox);
+            div.appendChild(text);
+            div.appendChild(percentageInput);
+            div.appendChild(deleteButton);
+            // 결과를 출력할 div에 새로 생성한 div 추가
+            document.getElementById('output').appendChild(div);
+
+            // 텍스트 인풋 초기화
+            document.getElementById('userInput').value = '';
+        }
+
+        // 저장 버튼을 눌렀을 때 호출되는 함수
+        function saveData() {
+            const outputDiv = document.getElementById('output');
+            const dataToSave = [];
+            // 출력된 각 항목을 반복
+            outputDiv.childNodes.forEach(child => {
+                const checkbox = child.querySelector('input[type="checkbox"]');
+                const text = child.querySelector('span').textContent;
+                const percentage = child.querySelector('input[type="number"]').value;
+                // 항목 데이터를 배열에 저장
+                dataToSave.push({ text: text, checked: checkbox.checked, percentage: percentage });
+            });
+            // 로컬 스토리지에 저장
+            localStorage.setItem('savedData', JSON.stringify(dataToSave));
+        }
+
+        // 삭제 버튼을 눌렀을 때 호출되는 함수
+        function deleteData() {
+            // 사용자에게 확인 요청
+            const confirmed = confirm("정말로 데이터를 삭제하시겠습니까?");
+            if (confirmed) {
+                // 로컬 스토리지에서 데이터 삭제
+                localStorage.removeItem('savedData');
+                // 화면의 데이터 삭제
+                document.getElementById('output').innerHTML = '';
+            }
+        }
+
+        // 페이지 로드 시 저장된 데이터를 불러오는 함수
+        function loadData() {
+            const savedData = JSON.parse(localStorage.getItem('savedData'));
+            if (savedData) {
+                // 저장된 각 항목을 반복
+                savedData.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('item'); // 아이템 클래스 추가
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = item.checked;
+                    // 체크된 경우 배경색 추가
+                    if (item.checked) {
+                        div.classList.add('highlight');
+                    }
+                    // 체크박스 클릭 시 배경색 변경
+                    checkbox
+                    .onclick = function() {
+                        if (checkbox.checked) {
+                            div.classList.add('highlight');
+                        } else {
+                            div.classList.remove('highlight');
+                        }
+                    };
+
+                    const text = document.createElement('span');
+                    text.textContent = item.text;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '삭제';
+                    deleteButton.onclick = function() {
+                        div.remove();
+                    };
+
+                    const percentageInput = document.createElement('input');
+                    percentageInput.type = 'number';
+                    percentageInput.min = 0;
+                    percentageInput.max = 100;
+                    percentageInput.placeholder = '0-100';
+                    percentageInput.value = item.percentage;
+
+                    div.appendChild(checkbox);
+                    div.appendChild(text);
+                    div.appendChild(percentageInput);
+                    div.appendChild(deleteButton);
+                    document.getElementById('output').appendChild(div);
+                });
+            }
+        }
+
+        // 데이터를 파일로 저장하는 함수
+        function saveToFile() {
+            const outputDiv = document.getElementById('output');
+            const dataToSave = [];
+            // 출력된 각 항목을 반복
+            outputDiv.childNodes.forEach(child => {
+                const checkbox = child.querySelector('input[type="checkbox"]');
+                const text = child.querySelector('span').textContent;
+                const percentage = child.querySelector('input[type="number"]').value;
+                // 항목 데이터를 배열에 저장
+                dataToSave.push({ text: text, checked: checkbox.checked, percentage: percentage });
+            });
+            // 데이터를 JSON 문자열로 변환
+            const dataStr = JSON.stringify(dataToSave, null, 2);
+            // Blob 객체 생성
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            // URL 생성
+            const url = URL.createObjectURL(blob);
+            // a 태그를 사용하여 다운로드 링크 생성 및 클릭 이벤트 발생
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            document.body.appendChild(a);
+            a.click();
+            // a 태그 제거
+            document.body.removeChild(a);
+            // URL 해제
+            URL.revokeObjectURL(url);
+        }
+
+        // 파일을 불러오는 함수
+        function loadFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                const data = JSON.parse(contents);
+                // 화면의 기존 데이터 삭제
+                document.getElementById('output').innerHTML = '';
+
+                // 불러온 각 항목을 화면에 추가
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('item'); // 아이템 클래스 추가
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = item.checked;
+                    // 체크된 경우 배경색 추가
+                    if (item.checked) {
+                        div.classList.add('highlight');
+                    }
+                    // 체크박스 클릭 시 배경색 변경
+                    checkbox.onclick = function() {
+                        if (checkbox.checked) {
+                            div.classList.add('highlight');
+                        } else {
+                            div.classList.remove('highlight');
+                        }
+                    };
+
+                    const text = document.createElement('span');
+                    text.textContent = item.text;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '삭제';
+                    deleteButton.onclick = function() {
+                        div.remove();
+                    };
+
+                    const percentageInput = document.createElement('input');
+                    percentageInput.type = 'number';
+                    percentageInput.min = 0;
+                    percentageInput.max = 100;
+                    percentageInput.placeholder = '0-100';
+                    percentageInput.value = item.percentage;
+
+                    div.appendChild(checkbox);
+                    div.appendChild(text);
+                    div.appendChild(percentageInput);
+                    div.appendChild(deleteButton);
+                    document.getElementById('output').appendChild(div);
+                });
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>

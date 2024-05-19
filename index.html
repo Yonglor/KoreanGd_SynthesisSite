@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국지메_종합사이트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<style>
+        body {
+        font-family: "Noto Sans KR", sans-serif;
+        }
+    .butf {
+        font-family: "Noto Sans KR", sans-serif;
+        border-radius: 10px;
+    }
+
+    .orb {
+        position: absolute;
+        right: 1000px;
+        
+    }
+    .orb:hover {
+        transform: scale(1.5);
+        transition: 0.5s;
+        border-color: red;
+    }
+    .orb:not(:hover) {
+        transform: scale(1);
+        transition: 0.5s;
+    }
+    .orr {
+        position: absolute;
+        left: 1000px;
+    }
+    .orr:hover {
+        transform: scale(1.5);
+        transition: 0.5s;
+        border-color: blue;
+    }
+    .orr:not(:hover) {
+        transform: scale(1);
+        transition: 0.5s;
+    }
+
+    .al {
+        text-align: center;
+    }
+
+    .nextb {
+        position: absolute;
+        bottom: 365px;
+    }
+
+    .graba {
+        background-image: linear-gradient(90deg, #12c2e9,#c471ed,#f64f59);
+    }
+</style>
+<body class="graba">
+    <div class="al">
+        <img src="한지종사.png">
+        <h3>이 사이트는 한국 지메인들을 위한 여러 잡다한 기능이 있는 사이트입니다.</h3>
+        <button class="butf orb" onclick="bukit()">지메 - 버킷리스트</button>
+        <button class="butf orb nextb">커밍 순</button>
+        <button class="butf orr"> 커밍 쑨</button>
+        <button class="butf orr nextb"> 커밍업</button>
+
+    </div>
+    <script>
+        var linkbuk = 'buk.html'
+        function bukit() {
+            location.href=linkbuk
+        }
+    </script>
+</body>
+</html>
