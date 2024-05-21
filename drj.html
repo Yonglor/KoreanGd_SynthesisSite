@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국지메 종합사이트 - 데몬 룰렛 정하기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<style>
+    body {
+        font-family: "Noto Sans KR", sans-serif;
+    }
+
+    .butf {
+        font-family: "Noto Sans KR", sans-serif;
+        border-radius: 10px;
+        background: linear-gradient(0deg, rgba(6,14,131,1) 0%, rgba(12,25,180,1) 100%);
+        color: white;
+        box-shadow: 1px 2.5px 15px black;
+    }
+
+    .anata {
+        text-align: center;
+    }
+
+    .teax {
+        font-family: "Noto Sans KR", sans-serif;
+        height: 100px;
+        width: 300px;
+    }
+
+    .backa {
+        background-image: linear-gradient(90deg, rgb(245, 170, 255), rgb(164, 237, 255));
+    }
+    .f {
+        font-family: "Noto Sans KR", sans-serif;
+    }
+</style>
+<body class="backa">
+    <div class="anata">
+        <h1>데몬 룰렛 정하기</h1>
+        <label for="range">범위:</label>
+        <select id="range" onchange="toggleCustomRange()">
+            <option value="main">메인 (1-75)</option>
+            <option value="extended">익텐 (76-150)</option>
+            <option value="custom">범위 커스텀</option>
+        </select>
+    
+        <div id="customRange" style="display: none;">
+            <label for="min">최소:</label>
+            <input type="number" id="min" value="1">
+            <label for="max">최대:</label>
+            <input type="number" id="max" value="150">
+        </div>
+    
+        <button class="butf" onclick="startGenerating()">순위 뽑기</button>
+    
+        <p id="result">순위: </p>
+
+        <iframe src="https://gmdkoreaforum.com/demonlist/1" width="300" height="500"></iframe>
+        <div></div>
+        <textarea class="teax" placeholder="메모"></textarea>
+
+        <div>
+            <input type="text" id="itemInput" placeholder="항목을 입력하세요">
+            <button class="butf" onclick="addItem()">항목 추가</button>
+        </div>
+        <div class="f" id="items"></div>
+        <button class="butf" onclick="spinRoulette()">룰렛 돌리기</button>
+        <div id="roulette"></div>
+    
+        <script>
+            let items = [];
+            let rouletteInterval;
+    
+            function addItem() {
+                const itemInput = document.getElementById('itemInput');
+                const itemValue = itemInput.value.trim();
+                if (itemValue) {
+                    items.push(itemValue);
+                    itemInput.value = '';
+                    displayItems();
+                }
+            }
+    
+            function displayItems() {
+                const itemsDiv = document.getElementById('items');
+                itemsDiv.innerHTML = '';
+                items.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.textContent = item;
+                    itemsDiv.appendChild(itemDiv);
+                });
+            }
+    
+            function spinRoulette() {
+                if (items.length === 0) {
+                    alert('항목을 추가하세요.');
+                    return;
+                }
+                const rouletteDiv = document.getElementById('roulette');
+                let randomIndex = Math.floor(Math.random() * items.length);
+                let selectedItem = items[randomIndex];
+    
+                let counter = 0;
+                let flickerDuration = 5000; // 3 seconds
+                let flickerInterval = 100; // Interval for changing text
+    
+                rouletteInterval = setInterval(() => {
+                    rouletteDiv.textContent = items[Math.floor(Math.random() * items.length)];
+                    counter += flickerInterval;
+                    if (counter >= flickerDuration) {
+                        clearInterval(rouletteInterval);
+                        rouletteDiv.textContent = selectedItem;
+                    }
+                }, flickerInterval);
+            }
+        </script>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>

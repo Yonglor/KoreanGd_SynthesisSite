@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Roulette</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #items {
+            margin-bottom: 20px;
+        }
+        #roulette {
+            font-size: 2em;
+            margin-top: 20px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Roulette</h1>
+    <div>
+        <input type="text" id="itemInput" placeholder="항목을 입력하세요">
+        <button onclick="addItem()">항목 추가</button>
+    </div>
+    <div id="items"></div>
+    <button onclick="spinRoulette()">룰렛 돌리기</button>
+    <div id="roulette"></div>
+
+    <script>
+        let items = [];
+        let rouletteInterval;
+
+        function addItem() {
+            const itemInput = document.getElementById('itemInput');
+            const itemValue = itemInput.value.trim();
+            if (itemValue) {
+                items.push(itemValue);
+                itemInput.value = '';
+                displayItems();
+            }
+        }
+
+        function displayItems() {
+            const itemsDiv = document.getElementById('items');
+            itemsDiv.innerHTML = '';
+            items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.textContent = item;
+                itemsDiv.appendChild(itemDiv);
+            });
+        }
+
+        function spinRoulette() {
+            if (items.length === 0) {
+                alert('항목을 추가하세요.');
+                return;
+            }
+            const rouletteDiv = document.getElementById('roulette');
+            let randomIndex = Math.floor(Math.random() * items.length);
+            let selectedItem = items[randomIndex];
+
+            let counter = 0;
+            let flickerDuration = 3000; // 3 seconds
+            let flickerInterval = 100; // Interval for changing text
+
+            rouletteInterval = setInterval(() => {
+                rouletteDiv.textContent = items[Math.floor(Math.random() * items.length)];
+                counter += flickerInterval;
+                if (counter >= flickerDuration) {
+                    clearInterval(rouletteInterval);
+                    rouletteDiv.textContent = selectedItem;
+                }
+            }, flickerInterval);
+        }
+    </script>
+</body>
+</html>
